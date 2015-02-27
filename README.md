@@ -3,7 +3,9 @@ King Kernel for Samsung Galaxy Victory 4G LTE GOGHVMU by Nick_73
 
     *Based off of stock ND4 kernel with InsanelyCool Kernel voltages
 
-    *Max CPU frequency up to 1.5 GHz
+    *Cherrypicked tweaks from other kernel sources
+
+    *Max CPU frequency up to 1.3 GHz
 
 #How To Build
 
@@ -15,7 +17,7 @@ King Kernel for Samsung Galaxy Victory 4G LTE GOGHVMU by Nick_73
     
 #A more comprehensive guide here:
 
-    http://goo.gl/vyRxDY
+    http://goo.gl/pfOc1L
     
               
 #Build and use at your own risk! This is a work in progress and WILL EAT YOUR CAT!
