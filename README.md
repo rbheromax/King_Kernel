@@ -12,7 +12,7 @@ King Kernel for Samsung Galaxy Victory 4G LTE GOGHVMU by Nick_73
     git clone https://github.com/Nick73/King_Kernel.git
     cd King_Kernel
     export ARCH=arm
-    make gogh_defconfig
+    make 1king_defconfig
     make
     
 #A more comprehensive guide here:
