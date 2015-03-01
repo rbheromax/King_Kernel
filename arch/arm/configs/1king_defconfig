@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Linux/arm 3.0.40 Kernel Configuration
+# Linux/arm 3.0.33 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -177,9 +177,7 @@ CONFIG_BLK_DEV_BSG=y
 CONFIG_IOSCHED_NOOP=y
 # CONFIG_IOSCHED_DEADLINE is not set
 CONFIG_IOSCHED_CFQ=y
-CONFIG_IOSCHED_SIO=y
 # CONFIG_DEFAULT_CFQ is not set
-# CONFIG_DEFAULT_SIO is not set
 CONFIG_DEFAULT_NOOP=y
 CONFIG_DEFAULT_IOSCHED="noop"
 # CONFIG_INLINE_SPIN_TRYLOCK is not set
