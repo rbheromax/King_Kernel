@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CurrentKernelVer=39
+CurrentKernelVer=40
 
-while [ "$CurrentKernelVer" -ne 40 ]; do
+while [ "$CurrentKernelVer" -ne 41 ]; do
 	y=$(($CurrentKernelVer + 1))	
 	wget https://www.kernel.org/pub/linux/kernel/v3.x/incr/patch-3.0.$CurrentKernelVer-$y.gz -O ../patch-3.0.$CurrentKernelVer-$y.gz
 	gunzip -d ../patch-3.0.$CurrentKernelVer-$y.gz
