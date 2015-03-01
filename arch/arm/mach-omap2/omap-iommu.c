@@ -60,10 +60,6 @@ static struct platform_device *omap3_iommu_pdev[NR_OMAP3_IOMMU_DEVICES];
 #endif
 
 #ifdef CONFIG_ARCH_OMAP4
-
-#define SET_DSP_CONSTRAINT	400
-#define SET_MPU_CORE_CONSTRAINT	400
-
 static struct iommu_device omap4_devices[] = {
 	{
 		.base = OMAP4_MMU1_BASE,
