@@ -614,11 +614,11 @@ void add_disk(struct gendisk *disk)
 	register_disk(disk);
 	blk_register_queue(disk);
 
-        /*
-         * Take an extra ref on queue which will be put on disk_release()
-         * so that it sticks around as long as @disk is there.
-         */
-        WARN_ON_ONCE(blk_get_queue(disk->queue));
+	/*
+	 * Take an extra ref on queue which will be put on disk_release()
+	 * so that it sticks around as long as @disk is there.
+	 */
+	WARN_ON_ONCE(blk_get_queue(disk->queue));
 
 	retval = sysfs_create_link(&disk_to_dev(disk)->kobj, &bdi->dev->kobj,
 				   "bdi");
@@ -744,7 +744,7 @@ void __init printk_all_partitions(void)
 		struct hd_struct *part;
 		char name_buf[BDEVNAME_SIZE];
 		char devt_buf[BDEVT_SIZE];
-		u8 uuid[PARTITION_META_INFO_UUIDLTH * 2 + 1];
+		char uuid_buf[PARTITION_META_INFO_UUIDLTH * 2 + 5];
 
 		/*
 		 * Don't show empty devices or things that have been
@@ -763,14 +763,16 @@ void __init printk_all_partitions(void)
 		while ((part = disk_part_iter_next(&piter))) {
 			bool is_part0 = part == &disk->part0;
 
-			uuid[0] = 0;
+			uuid_buf[0] = '\0';
 			if (part->info)
-				part_unpack_uuid(part->info->uuid, uuid);
+				snprintf(uuid_buf, sizeof(uuid_buf), "%pU",
+					 part->info->uuid);
 
 			printk("%s%s %10llu %s %s", is_part0 ? "" : "  ",
 			       bdevt_str(part_devt(part), devt_buf),
 			       (unsigned long long)part->nr_sects >> 1,
-			       disk_name(disk, part->partno, name_buf), uuid);
+			       disk_name(disk, part->partno, name_buf),
+			       uuid_buf);
 			if (is_part0) {
 				if (disk->driverfs_dev != NULL &&
 				    disk->driverfs_dev->driver != NULL)
@@ -1113,7 +1115,7 @@ static void disk_release(struct device *dev)
 	free_part_stats(&disk->part0);
 	free_part_info(&disk->part0);
 	if (disk->queue)
-                blk_put_queue(disk->queue);
+		blk_put_queue(disk->queue);
 	kfree(disk);
 }
 
@@ -1129,11 +1131,11 @@ static int disk_uevent(struct device *dev, struct kobj_uevent_env *env)
 		cnt++;
 	disk_part_iter_exit(&piter);
 	add_uevent_var(env, "NPARTS=%u", cnt);
-#ifdef CONFIG_USB_HOST_NOTIFY
+#ifdef CONFIG_USB_STORAGE_DETECT
 	if (disk->interfaces == GENHD_IF_USB) {
-		pr_info("genhd : add_uevent media_present %d\n",
-				disk->media_present);
 		add_uevent_var(env, "MEDIAPRST=%d", disk->media_present);
+		printk(KERN_INFO "%s %d, disk->media_present=%d, cnt=%d\n",
+				__func__, __LINE__, disk->media_present, cnt);
 	}
 #endif
 	return 0;
@@ -1617,7 +1619,7 @@ static void disk_events_workfn(struct work_struct *work)
 	unsigned long intv;
 	int nr_events = 0, i;
 
-#ifdef CONFIG_USB_HOST_NOTIFY
+#ifdef CONFIG_USB_STORAGE_DETECT
 	if (disk->interfaces != GENHD_IF_USB)
 		/* check events */
 		events = disk->fops->check_events(disk, clearing);
@@ -1644,13 +1646,12 @@ static void disk_events_workfn(struct work_struct *work)
 	for (i = 0; i < ARRAY_SIZE(disk_uevents); i++)
 		if (events & disk->events & (1 << i))
 			envp[nr_events++] = disk_uevents[i];
-
-#ifdef CONFIG_USB_HOST_NOTIFY
-	if (disk->interfaces != GENHD_IF_USB) {
-		if (nr_events)
-			kobject_uevent_env(&disk_to_dev(disk)->kobj,
-					KOBJ_CHANGE, envp);
-	}
+#ifdef CONFIG_USB_STORAGE_DETECT
+		if (disk->interfaces != GENHD_IF_USB) {
+			if (nr_events)
+				kobject_uevent_env(&disk_to_dev(disk)->kobj,
+							KOBJ_CHANGE, envp);
+		}
 #endif
 }
 
